@@ -24,7 +24,7 @@ func TestTerraformAwsNetworkExample(t *testing.T) {
 	// terraform testing.
 	terraformOptions := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
 		// The path to where our Terraform code is located
-		TerraformDir: "../examples/terraform-aws-network-example",
+		TerraformDir: "../.",
 
 		// Variables to pass to our Terraform code using -var options
 		Vars: map[string]interface{}{
