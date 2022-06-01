@@ -1,0 +1,27 @@
+kind: pipeline
+type: docker
+name: localstack
+
+trigger:
+  branch:
+  - main
+
+services:
+- name: localstack
+  image: localstack/localstack:0.14.3
+
+steps:
+- name: localstack-up
+  image: alpine/curl:3.14
+  commands:
+  # Checks to see that localstack service is up and running
+  - echo -n waiting for localstack && STACK=down && while [ "$STACK" == "down" ]; do echo -n "." && sleep 3 && curl -sm 1 localstack:4566/health >>/dev/null && STACK=up; done
+  - curl localstack:4566/health
+
+- name: test
+  image: hashicorp/terraform:1.2.2
+  commands:
+  - apk add go
+  - cd test
+  - go test -v -run TestTerraformAwsNetworkExample
+  
