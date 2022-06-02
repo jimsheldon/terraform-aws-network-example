@@ -15,7 +15,7 @@ func TestTerraformAwsNetworkExample(t *testing.T) {
 
 	// Installl the provider.tf with defered deletion
 	defer os.Remove("../test-provider.tf")
-	files.CopyFile("provider.tf", "../test-provider.tf")
+	files.CopyFile("aws-provider-localstack.tf", "../test-provider.tf")
 
 	// Construct the terraform options with default retryable errors to handle the most common retryable errors in
 	// terraform testing.

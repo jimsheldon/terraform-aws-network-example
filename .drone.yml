@@ -21,6 +21,32 @@ steps:
   image: hashicorp/terraform:1.2.2
   commands:
   - apk add go
-  - cd test
+  - cd tests
   - go test -v -run TestTerraformAwsNetworkExample
-  
+
+---  
+kind: pipeline
+type: docker
+name: terraform test
+
+trigger:
+  branch:
+  - main
+
+services:
+- name: localstack
+  image: localstack/localstack:0.14.3
+
+steps:
+
+- name: localstack wait
+  image: alpine/curl:3.14
+  commands:
+  # Checks to see that localstack service is up and running
+  - until curl -s http://localstack:4566/health; do echo -n . && sleep 1; done
+
+- name: test
+  image: hashicorp/terraform:1.2.2
+  commands:
+  - terraform test
+ 
