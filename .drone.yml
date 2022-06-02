@@ -1,6 +1,6 @@
 kind: pipeline
 type: docker
-name: localstack
+name: localstack terratest
 
 trigger:
   branch:
@@ -27,7 +27,7 @@ steps:
 ---  
 kind: pipeline
 type: docker
-name: terraform test
+name: localstack terraform
 
 trigger:
   branch:
@@ -48,5 +48,6 @@ steps:
 - name: test
   image: hashicorp/terraform:1.2.2
   commands:
+  - cp tests/aws-provider-localstack.tf test-provider.tf
   - terraform test
  
