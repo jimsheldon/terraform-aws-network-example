@@ -1,9 +1,10 @@
 package test
 
 import (
+	"os"
 	"testing"
 
-	"github.com/gruntwork-io/terratest/modules/aws"
+	"github.com/gruntwork-io/go-commons/files"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	"github.com/stretchr/testify/assert"
 )
@@ -12,13 +13,9 @@ import (
 func TestTerraformAwsNetworkExample(t *testing.T) {
 	t.Parallel()
 
-	// Pick a random AWS region to test in. This helps ensure your code works in all regions.
-	awsRegion := aws.GetRandomStableRegion(t, nil, nil)
-
-	// Give the VPC and the subnets correct CIDRs
-	vpcCidr := "10.10.0.0/16"
-	privateSubnetCidr := "10.10.1.0/24"
-	publicSubnetCidr := "10.10.2.0/24"
+	// Installl the provider.tf with defered deletion
+	defer os.Remove("../test-provider.tf")
+	files.CopyFile("provider.tf", "../test-provider.tf")
 
 	// Construct the terraform options with default retryable errors to handle the most common retryable errors in
 	// terraform testing.
@@ -28,10 +25,10 @@ func TestTerraformAwsNetworkExample(t *testing.T) {
 
 		// Variables to pass to our Terraform code using -var options
 		Vars: map[string]interface{}{
-			"main_vpc_cidr":       vpcCidr,
-			"private_subnet_cidr": privateSubnetCidr,
-			"public_subnet_cidr":  publicSubnetCidr,
-			"aws_region":          awsRegion,
+			"main_vpc_cidr":       "10.10.0.0/16",
+			"private_subnet_cidr": "10.10.1.0/24",
+			"public_subnet_cidr":  "10.10.2.0/24",
+			"aws_region":          "us-east-2",
 		},
 	})
 
@@ -42,8 +39,8 @@ func TestTerraformAwsNetworkExample(t *testing.T) {
 	terraform.InitAndApply(t, terraformOptions)
 
 	// Run `terraform output` to get the value of an output variable
-//	publicSubnetId := terraform.Output(t, terraformOptions, "public_subnet_id")
-//	privateSubnetId := terraform.Output(t, terraformOptions, "private_subnet_id")
+	//	publicSubnetId := terraform.Output(t, terraformOptions, "public_subnet_id")
+	//	privateSubnetId := terraform.Output(t, terraformOptions, "private_subnet_id")
 	vpcId := terraform.Output(t, terraformOptions, "main_vpc_id")
 
 	assert.NotNil(t, vpcId)
