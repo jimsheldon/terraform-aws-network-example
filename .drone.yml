@@ -11,16 +11,15 @@ services:
   image: localstack/localstack:0.14.3
 
 steps:
-- name: localstack-up
+- name: localstack wait
   image: alpine/curl:3.14
   commands:
   # Checks to see that localstack service is up and running
-  - until curl -s http://localhost:4566/health; do echo -n . && sleep 1; done
+  - until curl -s http://localstack:4566/health; do echo -n . && sleep 1; done
 
 - name: test
   image: hashicorp/terraform:1.2.2
   commands:
-  - exit 1
   - apk add go
   - cd test
   - go test -v -run TestTerraformAwsNetworkExample
