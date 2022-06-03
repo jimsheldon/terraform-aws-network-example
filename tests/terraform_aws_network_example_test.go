@@ -29,6 +29,7 @@ func TestTerraformAwsNetworkExample(t *testing.T) {
 			"private_subnet_cidr": "10.10.1.0/24",
 			"public_subnet_cidr":  "10.10.2.0/24",
 			"aws_region":          "us-east-2",
+			"tag_name":            "demo",
 		},
 	})
 
@@ -38,18 +39,9 @@ func TestTerraformAwsNetworkExample(t *testing.T) {
 	// This will run `terraform init` and `terraform apply` and fail the test if there are any errors
 	terraform.InitAndApply(t, terraformOptions)
 
-	// Run `terraform output` to get the value of an output variable
-	//	publicSubnetId := terraform.Output(t, terraformOptions, "public_subnet_id")
-	//	privateSubnetId := terraform.Output(t, terraformOptions, "private_subnet_id")
 	vpcId := terraform.Output(t, terraformOptions, "main_vpc_id")
-
-	assert.NotNil(t, vpcId)
 	assert.Contains(t, vpcId, "vpc-")
-	//subnets := aws.GetSubnetsForVpc(t, vpcId, awsRegion)
 
-	//require.Equal(t, 2, len(subnets))
-	// Verify if the network that is supposed to be public is really public
-	//assert.True(t, aws.IsPublicSubnet(t, publicSubnetId, awsRegion))
-	// Verify if the network that is supposed to be private is really private
-	//assert.False(t, aws.IsPublicSubnet(t, privateSubnetId, awsRegion))
+	natNameTag := terraform.Output(t, terraformOptions, "nat_name_tag")
+	assert.Equal(t, "demo", natNameTag)
 }

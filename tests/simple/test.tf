@@ -18,41 +18,33 @@ module "main" {
   # the main module directory.
   source = "../.."
 
-  # This test suite is aiming to test the "defaults" for
-  # this module, so it doesn't set any input variables
-  # and just lets their default values be selected instead.
-
+  aws_region          = "us-east-2"
   main_vpc_cidr       = "10.10.0.0/16"
   private_subnet_cidr = "10.10.1.0/24"
   public_subnet_cidr  = "10.10.2.0/24"
-  aws_region          = "us-east-2"
+  tag_name            = "demo"
 }
 
-locals {
-  vpc_id_parts = regex("^vpc-", module.main.main_vpc_id)
+data "aws_eip" "nat" {
+  id = module.main.nat_id
 }
 
 # The special test_assertions resource type, which belongs
 # to the test provider we required above, is a temporary
 # syntax for writing out explicit test assertions.
-resource "test_assertions" "api_url" {
+resource "test_assertions" "vpc" {
   # "component" serves as a unique identifier for this
   # particular set of assertions in the test results.
-  component = "vpc_id"
+  component = "vpc"
 
-  # equal and check blocks serve as the test assertions.
-  # the labels on these blocks are unique identifiers for
-  # the assertions, to allow more easily tracking changes
-  # in success between runs.
-
-  equal "scheme" {
-    description = "vpc id"
-    got         = local.vpc_id_parts
-    want        = "vpc-"
+  check "vpc_id_prefix" {
+    description = "check vpc ID prefix"
+    condition   = can(regex("^vpc-", module.main.main_vpc_id))
   }
 
-#  check "port_number" {
-#    description = "default port number is 8080"
-#    condition   = can(regex(":8080$", module.main.main_vpc_id))
-#  }
+  equal "nat_name_tag" {
+    description = "check the nat name tag"
+    got         = data.aws_eip.nat.tags["Name"]
+    want        = "demo"
+  }
 }
