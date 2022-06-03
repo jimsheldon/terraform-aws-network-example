@@ -11,7 +11,7 @@ resource "aws_vpc" "main" {
   cidr_block = var.main_vpc_cidr
 
   tags = {
-    Name = var.tag_name
+    Name  = var.tag_name
   }
 }
 
@@ -75,6 +75,10 @@ resource "aws_route_table_association" "public" {
 
 resource "aws_eip" "nat" {
   vpc = true
+
+  tags = {
+    Name = var.tag_name
+  }
 }
 
 resource "aws_nat_gateway" "nat" {
