@@ -1,25 +1,6 @@
 kind: pipeline
 type: docker
-name: terraform validate
-
-trigger:
-  branch:
-  - main
-
-steps:
-- name: terraform validate
-  image: hashicorp/terraform:1.2.2
-  commands:
-  - terraform init -backend=false
-  - terraform validate
-
----
-kind: pipeline
-type: docker
 name: localstack terratest
-
-depends_on:
-- terraform validate
 
 trigger:
   branch:
@@ -47,9 +28,6 @@ steps:
 kind: pipeline
 type: docker
 name: localstack terraform
-
-depends_on:
-- terraform validate
 
 trigger:
   branch:
