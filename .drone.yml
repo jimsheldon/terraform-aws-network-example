@@ -48,6 +48,6 @@ steps:
 - name: test
   image: hashicorp/terraform:1.2.2
   commands:
-  - cp tests/aws-provider-localstack.tf tests/simple/test-provider.tf
+  - cp tests/aws-provider-localstack.tf tests/example/test-provider.tf
   - terraform test
  
