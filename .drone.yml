@@ -64,6 +64,10 @@ depends_on:
 - "Localstack Terraform CLI Test"
 
 trigger:
+  when:
+    status:
+    - failure
+    - success
   branch:
   - main
 
@@ -93,6 +97,10 @@ depends_on:
 - "AWS Terratest Test"
 
 trigger:
+  when:
+    status:
+    - failure
+    - success
   branch:
   - main
 
