@@ -1,6 +1,6 @@
 #kind: pipeline
 #type: docker
-#name: Localstack Terratest
+#name: Localstack Terratest Test
 #
 #trigger:
 #  branch:
@@ -29,7 +29,7 @@
 #---  
 #kind: pipeline
 #type: docker
-#name: Localstack Terraform CLI
+#name: Localstack Terraform CLI Test
 #
 #trigger:
 #  branch:
@@ -57,30 +57,13 @@
 #---
 kind: pipeline
 type: docker
-name: AWS Terratest
+name: AWS Terratest Test
 
 trigger:
   branch:
   - main
 
-#volumes:
-#- name: dot-aws
-#  temp: {}
-
 steps:
-
-#- name: aws configure
-#  image: amazon/aws-cli:2.7.6
-#  volumes:
-#  - name: dot-aws
-#    path: /root/.aws
-#  environment:
-#    AWS_SECRET_ACCESS_KEY:
-#      from_secret: aws_secret_access_key
-#  commands:
-#  - aws configure set region us-east-2
-#  - aws configure set aws_access_key_id ASIARLPW64RAEISEPT5R
-#  - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
 
 - name: run tests
   image: hashicorp/terraform:1.2.2
@@ -90,12 +73,36 @@ steps:
       from_secret: aws_session_token
     AWS_SECRET_ACCESS_KEY:
       from_secret: aws_secret_access_key
-#  volumes:
-#  - name: dot-aws
-#    path: /root/.aws
   commands:
   - apk add go
   # copy AWS provider config into place
-  - cp tests/aws-provider.tf .
+  - cp tests/aws-provider.tf test-provider.tf
   - cd tests
   - go test -v -run TestTerraformAwsNetworkExample
+
+---
+kind: pipeline
+type: docker
+name: AWS Terraform CLI Test
+
+depends_on:
+- AWS Terratest
+
+trigger:
+  branch:
+  - main
+
+steps:
+
+- name: run tests
+  image: hashicorp/terraform:1.2.2
+  environment:
+    AWS_ACCESS_KEY_ID: ASIARLPW64RAEISEPT5R
+    AWS_SESSION_TOKEN:
+      from_secret: aws_session_token
+    AWS_SECRET_ACCESS_KEY:
+      from_secret: aws_secret_access_key
+  commands:
+  # copy AWS provider config into place
+  - cp tests/aws-provider.tf tests/example/test-provider.tf
+  - terraform test
