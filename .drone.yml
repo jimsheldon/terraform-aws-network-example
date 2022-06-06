@@ -22,7 +22,7 @@ steps:
   commands:
   - apk add go
   - cd tests
-  - go get
+  - go mod download
   - time go test -v -run TestTerraformAwsNetworkExample
 
 ---  
