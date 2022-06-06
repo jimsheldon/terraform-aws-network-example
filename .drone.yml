@@ -59,10 +59,6 @@ kind: pipeline
 type: docker
 name: AWS Terratest Test
 
-depends_on:
-- "Localstack Terratest Test"
-- "Localstack Terraform CLI Test"
-
 trigger:
   when:
     status:
