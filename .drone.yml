@@ -63,10 +63,17 @@ trigger:
   branch:
   - main
 
+volumes:
+- name: dot-aws
+  temp: {}
+
 steps:
 
-- name: run tests
-  image: hashicorp/terraform:1.2.2
+- name: aws configure
+  image: amazon/aws-cli:2.7.6
+  volumes:
+  - name: dot-aws
+    path: /root/.aws
   environment:
     AWS_SECRET_ACCESS_KEY:
       from_secret: aws_secret_access_key
@@ -75,6 +82,12 @@ steps:
   - aws configure set aws_access_key_id ASIARLPW64RAEISEPT5R
   - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
 
+- name: run tests
+  image: hashicorp/terraform:1.2.2
+  volumes:
+  - name: dot-aws
+    path: /root/.aws
+  commands:
   - apk add go
   - cd tests
   - go test -v -run TestTerraformAwsNetworkExample
