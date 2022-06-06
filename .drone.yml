@@ -22,7 +22,7 @@ steps:
   commands:
   - apk add go
   # copy AWS provider localstack overrides into place
-  - cp tests/aws-provider-localstack.tf .
+  - cp tests/aws-provider-localstack.tf test-provider.tf
   - cd tests
   - go test -v -run TestTerraformAwsNetworkExample
 
