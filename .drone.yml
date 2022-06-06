@@ -1,60 +1,60 @@
-kind: pipeline
-type: docker
-name: Localstack Terratest
-
-trigger:
-  branch:
-  - main
-
-services:
-- name: localstack
-  image: localstack/localstack:0.14.3
-
-steps:
-- name: localstack wait
-  image: curlimages/curl:7.83.1
-  commands:
-  # Checks to see that localstack service is up and running
-  - until curl -s http://localstack:4566/health; do echo -n . && sleep 1; done
-
-- name: run tests
-  image: hashicorp/terraform:1.2.2
-  commands:
-  - apk add go
-  # copy AWS provider localstack overrides into place
-  - cp tests/aws-provider-localstack.tf .
-  - cd tests
-  - go test -v -run TestTerraformAwsNetworkExample
-
----  
-kind: pipeline
-type: docker
-name: Localstack Terraform CLI
-
-trigger:
-  branch:
-  - main
-
-services:
-- name: localstack
-  image: localstack/localstack:0.14.3
-
-steps:
-
-- name: localstack wait
-  image: curlimages/curl:7.83.1
-  commands:
-  # Checks to see that localstack service is healthy
-  - until curl -s http://localstack:4566/health; do echo -n . && sleep 1; done
-
-- name: run tests
-  image: hashicorp/terraform:1.2.2
-  commands:
-  # copy AWS provider localstack overrides into place
-  - cp tests/aws-provider-localstack.tf tests/example/test-provider.tf
-  - terraform test
- 
----
+#kind: pipeline
+#type: docker
+#name: Localstack Terratest
+#
+#trigger:
+#  branch:
+#  - main
+#
+#services:
+#- name: localstack
+#  image: localstack/localstack:0.14.3
+#
+#steps:
+#- name: localstack wait
+#  image: curlimages/curl:7.83.1
+#  commands:
+#  # Checks to see that localstack service is up and running
+#  - until curl -s http://localstack:4566/health; do echo -n . && sleep 1; done
+#
+#- name: run tests
+#  image: hashicorp/terraform:1.2.2
+#  commands:
+#  - apk add go
+#  # copy AWS provider localstack overrides into place
+#  - cp tests/aws-provider-localstack.tf .
+#  - cd tests
+#  - go test -v -run TestTerraformAwsNetworkExample
+#
+#---  
+#kind: pipeline
+#type: docker
+#name: Localstack Terraform CLI
+#
+#trigger:
+#  branch:
+#  - main
+#
+#services:
+#- name: localstack
+#  image: localstack/localstack:0.14.3
+#
+#steps:
+#
+#- name: localstack wait
+#  image: curlimages/curl:7.83.1
+#  commands:
+#  # Checks to see that localstack service is healthy
+#  - until curl -s http://localstack:4566/health; do echo -n . && sleep 1; done
+#
+#- name: run tests
+#  image: hashicorp/terraform:1.2.2
+#  commands:
+#  # copy AWS provider localstack overrides into place
+#  - cp tests/aws-provider-localstack.tf tests/example/test-provider.tf
+#  - terraform test
+# 
+#---
 kind: pipeline
 type: docker
 name: AWS Terratest
@@ -68,10 +68,13 @@ steps:
 - name: run tests
   image: hashicorp/terraform:1.2.2
   environment:
-    AWS_ACCESS_KEY_ID: ASIARLPW64RAEISEPT5R
     AWS_SECRET_ACCESS_KEY:
       from_secret: aws_secret_access_key
   commands:
+  - aws configure set region us-east-2
+  - aws configure set aws_access_key_id ASIARLPW64RAEISEPT5R
+  - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+
   - apk add go
   - cd tests
   - go test -v -run TestTerraformAwsNetworkExample
