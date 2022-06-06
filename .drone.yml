@@ -22,7 +22,8 @@ steps:
   commands:
   - apk add go
   - cd tests
-  - go test -v -run TestTerraformAwsNetworkExample
+  - go get
+  - time go test -v -run TestTerraformAwsNetworkExample
 
 ---  
 kind: pipeline
@@ -49,5 +50,5 @@ steps:
   image: hashicorp/terraform:1.2.2
   commands:
   - cp tests/aws-provider-localstack.tf tests/example/test-provider.tf
-  - terraform test
+  - time terraform test
  
