@@ -63,31 +63,37 @@ trigger:
   branch:
   - main
 
-volumes:
-- name: dot-aws
-  temp: {}
+#volumes:
+#- name: dot-aws
+#  temp: {}
 
 steps:
 
-- name: aws configure
-  image: amazon/aws-cli:2.7.6
-  volumes:
-  - name: dot-aws
-    path: /root/.aws
-  environment:
-    AWS_SECRET_ACCESS_KEY:
-      from_secret: aws_secret_access_key
-  commands:
-  - aws configure set region us-east-2
-  - aws configure set aws_access_key_id ASIARLPW64RAEISEPT5R
-  - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+#- name: aws configure
+#  image: amazon/aws-cli:2.7.6
+#  volumes:
+#  - name: dot-aws
+#    path: /root/.aws
+#  environment:
+#    AWS_SECRET_ACCESS_KEY:
+#      from_secret: aws_secret_access_key
+#  commands:
+#  - aws configure set region us-east-2
+#  - aws configure set aws_access_key_id ASIARLPW64RAEISEPT5R
+#  - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
 
 - name: run tests
   image: hashicorp/terraform:1.2.2
-  volumes:
-  - name: dot-aws
-    path: /root/.aws
+  environment:
+    AWS_ACCESS_KEY_ID: ASIARLPW64RAEISEPT5R
+    AWS_SECRET_ACCESS_KEY:
+      from_secret: aws_secret_access_key
+#  volumes:
+#  - name: dot-aws
+#    path: /root/.aws
   commands:
   - apk add go
+  # copy AWS provider config into place
+  - cp tests/aws-provider.tf .
   - cd tests
   - go test -v -run TestTerraformAwsNetworkExample
