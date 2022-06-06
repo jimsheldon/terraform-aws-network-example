@@ -16,20 +16,21 @@ services:
 
 steps:
 - name: localstack wait
-  image: alpine/curl:3.14
+  image: curlimages/curl:7.83.1
   commands:
   # Checks to see that localstack service is up and running
   - until curl -s http://localstack:4566/health; do echo -n . && sleep 1; done
 
-- name: go get
-  image: golang:1.18
+- name: go mod download
+  image: golang:1.18.2
   commands:
   - cd tests
-  - go get
+  - go mod download
 
 - name: go test
-  image: golang:1.18
+  image: hashicorp/terraform:1.2.2
   commands:
+  - apk add go=1.18.2-r0
   - cd tests
   - go test -v -run TestTerraformAwsNetworkExample
 
@@ -49,7 +50,7 @@ services:
 steps:
 
 - name: localstack wait
-  image: alpine/curl:3.14
+  image: curlimages/curl:7.83.1
   commands:
   # Checks to see that localstack service is up and running
   - until curl -s http://localstack:4566/health; do echo -n . && sleep 1; done
