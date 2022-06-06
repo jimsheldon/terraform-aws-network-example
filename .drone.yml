@@ -86,7 +86,7 @@ type: docker
 name: AWS Terraform CLI Test
 
 depends_on:
-- AWS Terratest
+- AWS Terratest Test
 
 trigger:
   branch:
