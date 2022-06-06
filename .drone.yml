@@ -63,6 +63,8 @@ trigger:
   branch:
   - main
 
+steps:
+
 - name: run tests
   image: hashicorp/terraform:1.2.2
   environment:
