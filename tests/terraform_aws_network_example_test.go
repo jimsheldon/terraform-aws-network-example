@@ -34,7 +34,7 @@ func TestTerraformAwsNetworkExample(t *testing.T) {
 	terraform.InitAndApply(t, terraformOptions)
 
 	vpcId := terraform.Output(t, terraformOptions, "main_vpc_id")
-	assert.Contains(t, vpcId, "vpc-")
+	assert.Regexp(t, "^vpc-", vpcId)
 
 	natNameTag := terraform.Output(t, terraformOptions, "nat_name_tag")
 	assert.Equal(t, "demo", natNameTag)
