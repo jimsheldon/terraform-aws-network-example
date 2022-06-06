@@ -1,6 +1,6 @@
 kind: pipeline
 type: docker
-name: localstack terratest
+name: Localstack Terratest Test
 
 trigger:
   branch:
@@ -12,22 +12,24 @@ services:
 
 steps:
 - name: localstack wait
-  image: alpine/curl:3.14
+  image: curlimages/curl:7.83.1
   commands:
   # Checks to see that localstack service is up and running
   - until curl -s http://localstack:4566/health; do echo -n . && sleep 1; done
 
-- name: test
+- name: run tests
   image: hashicorp/terraform:1.2.2
   commands:
   - apk add go
+  # copy AWS provider localstack overrides into place
+  - cp tests/aws-provider-localstack.tf .
   - cd tests
   - go test -v -run TestTerraformAwsNetworkExample
 
 ---  
 kind: pipeline
 type: docker
-name: localstack terraform
+name: Localstack Terraform CLI Test
 
 trigger:
   branch:
@@ -40,14 +42,71 @@ services:
 steps:
 
 - name: localstack wait
-  image: alpine/curl:3.14
+  image: curlimages/curl:7.83.1
   commands:
-  # Checks to see that localstack service is up and running
+  # Checks to see that localstack service is healthy
   - until curl -s http://localstack:4566/health; do echo -n . && sleep 1; done
 
-- name: test
+- name: run tests
   image: hashicorp/terraform:1.2.2
   commands:
+  # copy AWS provider localstack overrides into place
   - cp tests/aws-provider-localstack.tf tests/example/test-provider.tf
   - terraform test
  
+---
+kind: pipeline
+type: docker
+name: AWS Terratest Test
+
+depends_on:
+- "Localstack Terratest Test"
+- "Localstack Terraform CLI Test"
+
+trigger:
+  branch:
+  - main
+
+steps:
+
+- name: run tests
+  image: hashicorp/terraform:1.2.2
+  environment:
+    AWS_ACCESS_KEY_ID: ASIARLPW64RAHAWUKAQ3
+    AWS_SESSION_TOKEN:
+      from_secret: aws_session_token
+    AWS_SECRET_ACCESS_KEY:
+      from_secret: aws_secret_access_key
+  commands:
+  - apk add go
+  # copy AWS provider config into place
+  - cp tests/aws-provider.tf test-provider.tf
+  - cd tests
+  - go test -v -run TestTerraformAwsNetworkExample
+
+---
+kind: pipeline
+type: docker
+name: AWS Terraform CLI Test
+
+depends_on:
+- "AWS Terratest Test"
+
+trigger:
+  branch:
+  - main
+
+steps:
+
+- name: run tests
+  image: hashicorp/terraform:1.2.2
+  environment:
+    AWS_ACCESS_KEY_ID: ASIARLPW64RAHAWUKAQ3
+    AWS_SESSION_TOKEN:
+      from_secret: aws_session_token
+    AWS_SECRET_ACCESS_KEY:
+      from_secret: aws_secret_access_key
+  commands:
+  # copy AWS provider config into place
+  - cp tests/aws-provider.tf tests/example/test-provider.tf
+  - terraform test

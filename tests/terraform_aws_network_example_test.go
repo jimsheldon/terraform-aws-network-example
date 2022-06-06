@@ -1,10 +1,8 @@
 package test
 
 import (
-	"os"
 	"testing"
 
-	"github.com/gruntwork-io/go-commons/files"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	"github.com/stretchr/testify/assert"
 )
