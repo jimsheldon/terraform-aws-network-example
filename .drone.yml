@@ -1,10 +1,14 @@
 kind: pipeline
 type: docker
-name: localstack terratest
+name: Localstack Terratest
 
 trigger:
   branch:
   - main
+
+workspace:
+  base: /go
+  path: src/github.com/jimsheldon/terraform-aws-network-example
 
 services:
 - name: localstack
@@ -17,18 +21,22 @@ steps:
   # Checks to see that localstack service is up and running
   - until curl -s http://localstack:4566/health; do echo -n . && sleep 1; done
 
-- name: test
-  image: hashicorp/terraform:1.2.2
+- name: go get
+  image: golang:1.18
   commands:
-  - apk add go
   - cd tests
-  - go mod download -v
+  - go get
+
+- name: go test
+  image: golang:1.18
+  commands:
+  - cd tests
   - go test -v -run TestTerraformAwsNetworkExample
 
 ---  
 kind: pipeline
 type: docker
-name: localstack terraform
+name: Localstack Terraform CLI
 
 trigger:
   branch:
@@ -46,7 +54,7 @@ steps:
   # Checks to see that localstack service is up and running
   - until curl -s http://localstack:4566/health; do echo -n . && sleep 1; done
 
-- name: test
+- name: terraform test
   image: hashicorp/terraform:1.2.2
   commands:
   - cp tests/aws-provider-localstack.tf tests/example/test-provider.tf
