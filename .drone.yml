@@ -15,7 +15,7 @@ steps:
   image: curlimages/curl:7.83.1
   commands:
   # Checks to see that localstack service is up and running
-  - until curl -s http://localstack:4566/health; do echo -n . && sleep 1; done
+  - until curl --silent --max-time 1 http://localstack:4566/health; do echo -n . && sleep 1; done
 
 - name: run tests
   image: hashicorp/terraform:1.2.2
@@ -45,7 +45,7 @@ steps:
   image: curlimages/curl:7.83.1
   commands:
   # Checks to see that localstack service is healthy
-  - until curl -s http://localstack:4566/health; do echo -n . && sleep 1; done
+  - until curl --silent --max-time 1 http://localstack:4566/health; do echo -n . && sleep 1; done
 
 - name: run tests
   image: hashicorp/terraform:1.2.2
