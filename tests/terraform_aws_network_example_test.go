@@ -38,7 +38,7 @@ func TestTerraformAwsNetworkExample(t *testing.T) {
 	vpcId := terraform.Output(t, terraformOptions, "main_vpc_id")
 	assert.Regexp(t, "^vpc-", vpcId)
 
-	subnets := aws.GetSubnetsForVpc(t, vpcId, awsRegion)
+	subnets := aws.GetSubnetsForVpc(t, vpcId, "us-east-2")
 	require.Equal(t, 2, len(subnets))
 
 	natNameTag := terraform.Output(t, terraformOptions, "nat_name_tag")
