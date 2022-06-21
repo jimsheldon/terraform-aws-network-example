@@ -6,6 +6,7 @@ import (
 	"github.com/gruntwork-io/terratest/modules/aws"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // An example of how to test the Terraform module in examples/terraform-aws-network-example using Terratest.
@@ -36,8 +37,9 @@ func TestTerraformAwsNetworkExample(t *testing.T) {
 
 	vpcId := terraform.Output(t, terraformOptions, "main_vpc_id")
 	assert.Regexp(t, "^vpc-", vpcId)
-	
+
 	subnets := aws.GetSubnetsForVpc(t, vpcId, awsRegion)
+	require.Equal(t, 2, len(subnets))
 
 	natNameTag := terraform.Output(t, terraformOptions, "nat_name_tag")
 	assert.Equal(t, "demo", natNameTag)
