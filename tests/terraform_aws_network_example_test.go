@@ -3,6 +3,7 @@ package test
 import (
 	"testing"
 
+	"github.com/gruntwork-io/terratest/modules/aws"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	"github.com/stretchr/testify/assert"
 )
@@ -35,6 +36,8 @@ func TestTerraformAwsNetworkExample(t *testing.T) {
 
 	vpcId := terraform.Output(t, terraformOptions, "main_vpc_id")
 	assert.Regexp(t, "^vpc-", vpcId)
+	
+	subnets := aws.GetSubnetsForVpc(t, vpcId, awsRegion)
 
 	natNameTag := terraform.Output(t, terraformOptions, "nat_name_tag")
 	assert.Equal(t, "demo", natNameTag)
