@@ -64,17 +64,14 @@ trigger:
 
 services:
 - name: moto
-  image: gruntwork/moto
-  ports:
-  - 5000
+  image: motoserver/moto
 
 steps:
 
-#- name: localstack wait
-#  image: curlimages/curl:7.83.1
-#  commands:
-#  # Checks to see that localstack service is healthy
-#  - until curl --fail --silent --max-time 1 http://localstack:4566/health; do echo -n . && sleep 1; done
+- name: localstack wait
+  image: curlimages/curl:7.83.1
+  commands:
+  - until curl --fail --silent --max-time 1 http://moto:5000; do echo -n . && sleep 1; done
 
 - name: run tests
   image: hashicorp/terraform:1.2.2
