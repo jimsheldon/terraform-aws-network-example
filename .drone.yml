@@ -65,6 +65,8 @@ trigger:
 services:
 - name: moto
   image: gruntwork/moto
+  ports:
+  - 5000
 
 steps:
 
