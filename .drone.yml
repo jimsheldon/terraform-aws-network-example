@@ -54,7 +54,6 @@
 #  - cp tests/aws-provider-localstack.tf tests/example/test-provider.tf
 #  - terraform test
 
----  
 kind: pipeline
 type: docker
 name: moto
