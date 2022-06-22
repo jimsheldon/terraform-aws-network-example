@@ -1,58 +1,86 @@
-kind: pipeline
-type: docker
-name: Localstack Terratest Test
-
-trigger:
-  branch:
-  - main
-
-services:
-- name: localstack
-  image: localstack/localstack:0.14.3
-
-steps:
-- name: localstack wait
-  image: curlimages/curl:7.83.1
-  commands:
-  # Checks to see that localstack service is up and running
-  - until curl --fail --silent --max-time 1 http://localstack:4566/health; do echo -n . && sleep 1; done
-
-- name: run tests
-  image: hashicorp/terraform:1.2.2
-  commands:
-  - apk add go
-  # copy AWS provider localstack overrides into place
-  - cp tests/aws-provider-localstack.tf test-provider.tf
-  - cd tests
-  - go test -v -run TestTerraformAwsNetworkExample
+#kind: pipeline
+#type: docker
+#name: Localstack Terratest Test
+#
+#trigger:
+#  branch:
+#  - main
+#
+#services:
+#- name: localstack
+#  image: localstack/localstack:0.14.3
+#
+#steps:
+#- name: localstack wait
+#  image: curlimages/curl:7.83.1
+#  commands:
+#  # Checks to see that localstack service is up and running
+#  - until curl --fail --silent --max-time 1 http://localstack:4566/health; do echo -n . && sleep 1; done
+#
+#- name: run tests
+#  image: hashicorp/terraform:1.2.2
+#  commands:
+#  - apk add go
+#  # copy AWS provider localstack overrides into place
+#  - cp tests/aws-provider-localstack.tf test-provider.tf
+#  - cd tests
+#  - go test -v -run TestTerraformAwsNetworkExample
+#
+#---  
+#kind: pipeline
+#type: docker
+#name: Localstack Terraform CLI Test
+#
+#trigger:
+#  branch:
+#  - main
+#
+#services:
+#- name: localstack
+#  image: localstack/localstack:0.14.3
+#
+#steps:
+#
+#- name: localstack wait
+#  image: curlimages/curl:7.83.1
+#  commands:
+#  # Checks to see that localstack service is healthy
+#  - until curl --fail --silent --max-time 1 http://localstack:4566/health; do echo -n . && sleep 1; done
+#
+#- name: run tests
+#  image: hashicorp/terraform:1.2.2
+#  commands:
+#  # copy AWS provider localstack overrides into place
+#  - cp tests/aws-provider-localstack.tf tests/example/test-provider.tf
+#  - terraform test
 
 ---  
 kind: pipeline
 type: docker
-name: Localstack Terraform CLI Test
+name: moto
 
 trigger:
   branch:
   - main
 
 services:
-- name: localstack
-  image: localstack/localstack:0.14.3
+- name: moto
+  image: gruntwork/moto
 
 steps:
 
-- name: localstack wait
-  image: curlimages/curl:7.83.1
-  commands:
-  # Checks to see that localstack service is healthy
-  - until curl --fail --silent --max-time 1 http://localstack:4566/health; do echo -n . && sleep 1; done
+#- name: localstack wait
+#  image: curlimages/curl:7.83.1
+#  commands:
+#  # Checks to see that localstack service is healthy
+#  - until curl --fail --silent --max-time 1 http://localstack:4566/health; do echo -n . && sleep 1; done
 
 - name: run tests
   image: hashicorp/terraform:1.2.2
   commands:
-  # copy AWS provider localstack overrides into place
-  - cp tests/aws-provider-localstack.tf tests/example/test-provider.tf
+  - cp tests/aws-provider-moto.tf tests/example/test-provider.tf
   - terraform test
+
 
 # disabling AWS tests for the talk
 # 
