@@ -56,7 +56,36 @@
 
 kind: pipeline
 type: docker
-name: moto
+name: moto terratest
+
+trigger:
+  branch:
+  - main
+
+services:
+- name: moto
+  image: motoserver/moto
+
+steps:
+
+- name: localstack wait
+  image: curlimages/curl:7.83.1
+  commands:
+  - until curl --fail --silent --max-time 1 http://moto:5000; do echo -n . && sleep 1; done
+
+- name: run tests
+  image: hashicorp/terraform:1.2.2
+  commands:
+  - apk add go
+  # copy AWS provider localstack overrides into place
+  - cp tests/aws-provider-moto.tf test-provider.tf
+  - cd tests
+  - go test -v -run TestTerraformAwsNetworkExample
+
+---
+kind: pipeline
+type: docker
+name: moto terraform cli
 
 trigger:
   branch:
