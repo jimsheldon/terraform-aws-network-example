@@ -13,14 +13,14 @@ services:
 steps:
 
 - name: write vars
-  image: busybox
+  image: alpine
   commands:
   - ls 
   - pwd
   - echo MY_VAR=myvalue > sourceme
 
 - name: read vars
-  image: busybox
+  image: alpine
   commands:
   - ls
   - pwd
