@@ -15,11 +15,15 @@ steps:
 - name: write vars
   image: busybox
   commands:
+  - ls 
+  - pwd
   - echo MY_VAR=myvalue > sourceme
 
 - name: read vars
   image: busybox
   commands:
+  - ls
+  - pwd
   - source sourceme
   - echo $MY_VAR
   - exit 1
