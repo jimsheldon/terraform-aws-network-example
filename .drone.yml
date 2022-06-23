@@ -11,6 +11,19 @@ services:
   image: localstack/localstack:0.14.3
 
 steps:
+
+- name: write vars
+  image: busybox
+  commands:
+  - echo MY_VAR=myvalue > sourceme
+
+- name: read vars
+  image: busybox
+  commands:
+  - source souceme
+  - echo $MY_VAR
+  - exit 1
+
 - name: localstack wait
   image: curlimages/curl:7.83.1
   commands:
