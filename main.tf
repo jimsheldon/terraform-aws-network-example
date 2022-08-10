@@ -77,7 +77,7 @@ resource "aws_eip" "nat" {
   vpc = true
 
   tags = {
-    Name = var.tag_name
+    Name = var.tag_name // trigger
   }
 }
 
