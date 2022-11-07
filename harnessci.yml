@@ -67,6 +67,7 @@ pipeline:
                       cd tests
                       go install github.com/gruntwork-io/terratest/cmd/terratest_log_parser@latest
                       PATH=$HOME/go/bin:$PATH terratest_log_parser -testlog test_output.log -outputdir test_output
+                      cat test_output/report.xml
                     reports:
                       type: JUnit
                       spec:
