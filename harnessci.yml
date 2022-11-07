@@ -45,18 +45,13 @@ pipeline:
                     image: hashicorp/terraform:1.2.2
                     shell: Sh
                     command: |-
-                      apk add go
-                      cp tests/aws-provider-localstack.tf test-provider.tf
-                      cd tests
-                      go test -v -run TestTerraformAwsNetworkExample | tee test_output.log
-                      go install github.com/gruntwork-io/terratest/cmd/terratest_log_parser@latest
-                      PATH=$HOME/go/bin:$PATH terratest_log_parser -testlog test_output.log -outputdir test_output
-                      ls
+                      cp tests/aws-provider-localstack.tf tests/example/test-provider.tf
+                      terraform test -junit-xml=report.xml
                     reports:
                       type: JUnit
                       spec:
                         paths:
-                          - tests/test_output/report.xml
+                          - report.xml
                   failureStrategies: []
           platform:
             os: Linux
