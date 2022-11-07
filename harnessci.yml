@@ -35,7 +35,7 @@ pipeline:
                     connectorRef: docker_hub
                     image: curlimages/curl:7.83.1
                     shell: Sh
-                    command: until curl --fail --silent --max-time 1 http://localstack:4566/health; sleep 2; done
+                    command: until curl --fail --silent --max-time 1 http://localstack:4566/health; do sleep 2; done
               - step:
                   type: Run
                   name: terratest
