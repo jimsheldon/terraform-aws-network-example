@@ -49,11 +49,6 @@ pipeline:
                       cp tests/aws-provider-localstack.tf test-provider.tf
                       cd tests
                       go test -v -run TestTerraformAwsNetworkExample | tee test_output.log
-                    reports:
-                      type: JUnit
-                      spec:
-                        paths:
-                          - report.xml
                   failureStrategies: []
               - step:
                   type: Run
