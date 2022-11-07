@@ -48,6 +48,7 @@ pipeline:
                       cp tests/aws-provider-localstack.tf tests/example/test-provider.tf
                       terraform test -junit-xml=report.xml
                       ls
+                      cat report.xml
                       ls tests/example
                     reports:
                       type: JUnit
