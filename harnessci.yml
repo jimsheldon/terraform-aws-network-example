@@ -44,18 +44,33 @@ pipeline:
                     connectorRef: docker_hub
                     image: hashicorp/terraform:1.2.2
                     shell: Sh
-                    command: |-
-                      cp tests/aws-provider-localstack.tf tests/example/test-provider.tf
-                      terraform test -junit-xml=report.xml
-                      ls
-                      cat report.xml
-                      ls tests/example
+                    command: |
+                      apk add go
+                      cp tests/aws-provider-localstack.tf test-provider.tf
+                      cd tests
+                      go test -v -run TestTerraformAwsNetworkExample | tee test_output.log
                     reports:
                       type: JUnit
                       spec:
                         paths:
                           - report.xml
                   failureStrategies: []
+              - step:
+                  type: Run
+                  name: terratest log parser
+                  identifier: terratest_log_parser
+                  spec:
+                    connectorRef: docker_hub
+                    image: golang:1.18
+                    shell: Sh
+                    command: |-
+                      go install github.com/gruntwork-io/terratest/cmd/terratest_log_parser@latest
+                      PATH=$HOME/go/bin:$PATH terratest_log_parser -testlog test_output.log -outputdir test_output
+                    reports:
+                      type: JUnit
+                      spec:
+                        paths:
+                          - tests/test_output/report.xml
           platform:
             os: Linux
             arch: Amd64
