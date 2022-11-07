@@ -1,0 +1,55 @@
+pipeline:
+  name: local stack test
+  identifier: local_stack_test
+  orgIdentifier: default
+  tags: {}
+  properties:
+    ci:
+      codebase:
+        connectorRef: account.Github_OAuth_1667833468644
+        repoName: jimsheldon/terraform-aws-network-example
+        build: <+input>
+  stages:
+    - stage:
+        name: stage one
+        identifier: stage_one
+        type: CI
+        spec:
+          cloneCodebase: true
+          execution:
+            steps:
+              - step:
+                  type: Run
+                  name: curl from host
+                  identifier: curl_from_host
+                  spec:
+                    connectorRef: docker_hub
+                    image: curlimages/curl:7.83.1
+                    shell: Sh
+                    command: until curl --fail --silent --max-time 1 http://localstack:4566/health; do echo -n . && sleep 2; done
+              - step:
+                  type: Run
+                  name: terratest
+                  identifier: terratest
+                  spec:
+                    connectorRef: docker_hub
+                    image: hashicorp/terraform:1.2.2
+                    shell: Sh
+                    command: |-
+                      apk add go
+                      cp tests/aws-provider-localstack.tf test-provider.tf
+                      cd tests
+                      go test -v -run TestTerraformAwsNetworkExample
+          platform:
+            os: Linux
+            arch: Amd64
+          runtime:
+            type: Cloud
+            spec: {}
+          serviceDependencies:
+            - identifier: localstack
+              name: localstack
+              type: Service
+              spec:
+                connectorRef: docker_hub
+                image: localstack/localstack:1.2.0
