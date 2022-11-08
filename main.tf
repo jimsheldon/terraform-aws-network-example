@@ -108,6 +108,7 @@ resource "aws_route_table" "private" {
       condition     = self.tags["Name"] == var.tag_name
       error_message = "the 'Name' tag does not match ${var.tag_name}"
     }
+  }
 }
 
 resource "aws_route_table_association" "private" {
