@@ -50,24 +50,6 @@ pipeline:
                       cd tests
                       go test -v -run TestTerraformAwsNetworkExample | tee test_output.log
                   failureStrategies: []
-              - step:
-                  type: Run
-                  name: terratest log parser
-                  identifier: terratest_log_parser
-                  spec:
-                    connectorRef: docker_hub
-                    image: golang:1.18
-                    shell: Sh
-                    command: |-
-                      cd tests
-                      go install github.com/gruntwork-io/terratest/cmd/terratest_log_parser@latest
-                      PATH=$HOME/go/bin:$PATH terratest_log_parser -testlog test_output.log -outputdir test_output
-                      cat test_output/report.xml
-                    reports:
-                      type: JUnit
-                      spec:
-                        paths:
-                          - tests/test_output/report.xml
           platform:
             os: Linux
             arch: Amd64
