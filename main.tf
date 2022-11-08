@@ -100,8 +100,14 @@ resource "aws_route_table" "private" {
   }
 
   tags = {
-    Name = var.tag_name
+    Name = "prefix-${var.tag_name}"
   }
+  
+  lifecycle {
+    postcondition {
+      condition     = self.tags["Name"] == var.tag_name
+      error_message = "the 'Name' tag does not match ${var.tag_name}"
+    }
 }
 
 resource "aws_route_table_association" "private" {
