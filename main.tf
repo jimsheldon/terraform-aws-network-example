@@ -77,8 +77,15 @@ resource "aws_eip" "nat" {
   vpc = true
 
   tags = {
-    Name = var.tag_name
+    Name = "prefix-${var.tag_name}"
   }
+
+  //lifecycle {
+  //  postcondition {
+  //    condition     = self.tags["Name"] == var.tag_name
+  //    error_message = "the 'Name' tag does not match ${var.tag_name}"
+  //  }
+  //}
 }
 
 resource "aws_nat_gateway" "nat" {
@@ -100,15 +107,8 @@ resource "aws_route_table" "private" {
   }
 
   tags = {
-    Name = "prefix-${var.tag_name}"
+    Name = var.tag_name
   }
-  
-  //lifecycle {
-  //  postcondition {
-  //    condition     = self.tags["Name"] == var.tag_name
-  //    error_message = "the 'Name' tag does not match ${var.tag_name}"
-  //  }
-  //}
 }
 
 resource "aws_route_table_association" "private" {
