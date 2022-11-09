@@ -1,0 +1,14 @@
+inputSet:
+  identifier: "test_input_set"
+  name: "test input set"
+  orgIdentifier: "default"
+  projectIdentifier: "Default_Project_1667833421639"
+  pipeline:
+    identifier: "AWS_Network_Example"
+    properties:
+      ci:
+        codebase:
+          build:
+            type: "PR"
+            spec:
+              number: "<+trigger.prNumber>"
