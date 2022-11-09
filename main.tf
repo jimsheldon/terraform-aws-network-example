@@ -100,7 +100,7 @@ resource "aws_route_table" "private" {
   }
 
   tags = {
-    Name = var.tag_name
+    Name = "prefix-${var.tag_name}"
   }
   
   //lifecycle {
