@@ -1,0 +1,14 @@
+inputSet:
+  identifier: "Pull_Request_Input_Set"
+  name: "Pull Request Input Set"
+  orgIdentifier: "default"
+  projectIdentifier: "Default_Project_1667833421639"
+  pipeline:
+    identifier: "Terraform_CLI_LocalStack_Test"
+    properties:
+      ci:
+        codebase:
+          build:
+            type: "PR"
+            spec:
+              number: "<+trigger.prNumber>"
