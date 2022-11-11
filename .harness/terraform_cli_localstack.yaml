@@ -42,9 +42,12 @@ pipeline:
                   identifier: terraform_test
                   spec:
                     connectorRef: docker_hub
-                    image: curlimages/curl:7.83.1
+                    image: hashicorp/terraform:1.2.2
                     shell: Sh
                     command: |-
+                      ls
+                      ls tests
+                      ls tests/example
                       cp tests/aws-provider-localstack.tf tests/example/test-provider.tf
                       terraform test
           platform:
