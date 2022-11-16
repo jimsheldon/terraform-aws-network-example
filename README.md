@@ -8,14 +8,14 @@ This example [Terraform](https://www.terraform.io/) module creates a basic AWS n
 - VPC ID prefix starts with `vpc-`
 - NAT EIP `Name` tag matches `tag_name`
 
-Tests are run under continuous integration using [Drone CI](https://www.drone.io) and [Localstack](https://localstack.cloud/).
+Tests are run under continuous integration using [Localstack](https://localstack.cloud/) and [Drone CI](https://www.drone.io) or [Harness CI](https://app.harness.io/auth/#/signup/?module=ci).
 
 ## Run Tests Locally
 
 ### Start Localstack docker container
 
 ```bash
-docker run --rm -it -p 4566:4566 -p 4510-4559:4510-4559 localstack/localstack:0.14.3
+docker run --rm -it -p 4566:4566 -p 4510-4559:4510-4559 localstack/localstack:1.2.0
 ```
 
 ### Run Terratest tests
