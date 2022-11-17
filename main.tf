@@ -2,6 +2,8 @@ data "aws_availability_zones" "available" {
   state = "available"
 }
 
+// trigger
+
 # ---------------------------------------------------------------------------------------------------------------------
 # DEPLOY A SIMPLE NETWORK
 # The network has an internet gateway and two subnets - private and public - in the same availability zone.
