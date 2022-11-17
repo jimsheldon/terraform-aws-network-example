@@ -7,6 +7,7 @@ jobs:
       - name: Start LocalStack
         run: |
           pip install localstack awscli-local[ver1] # install LocalStack cli and awslocal
+          pip install pyOpenSSL --upgrade           # workaround for https://askubuntu.com/questions/1428181/module-lib-has-no-attribute-x509-v-flag-cb-issuer-check
           docker pull localstack/localstack:1.2.0   # Make sure to pull the latest version of the image
           localstack start -d                       # Start LocalStack in the background
           
