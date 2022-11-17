@@ -18,6 +18,9 @@ jobs:
           
       - name: Run 'terraform test' against LocalStack
         run: |
+          pwd
+          ls
+          ls tests
           sed -i 's/localstack/localhost/g' tests/aws-provider-localstack.tf # localstack is reachable at 'localhost' not 'localstack'
           cp tests/aws-provider-localstack.tf test-provider.tf               # copy provider overrides into place
           cd tests                                                           # change to tests directory
