@@ -4,23 +4,17 @@ jobs:
   terraform-test:
     runs-on: ubuntu-latest
     steps:
-#      - name: Start LocalStack
-#        run: |
-#          pip install pyOpenSSL --upgrade           # workaround for https://askubuntu.com/questions/1428181/module-lib-has-no-attribute-x509-v-flag-cb-issuer-check
-#          pip install localstack awscli-local[ver1] # install LocalStack cli and awslocal
-#          docker pull localstack/localstack:1.2.0   # Make sure to pull the latest version of the image
-#          localstack start -d                       # Start LocalStack in the background
-#          
-#          echo "Waiting for LocalStack startup..."
-#          until curl --fail --silent --max-time 1 http://localhost:4566/health; do echo -n . && sleep 1; done
-#          
-#          echo "Startup complete"
-
-    services:
-      localstack:
-        image: localstack/localstack:1.2.0
-        ports:
-          - 4566:4566
+      - name: Start LocalStack
+        run: |
+          pip install pyOpenSSL --upgrade           # workaround for https://askubuntu.com/questions/1428181/module-lib-has-no-attribute-x509-v-flag-cb-issuer-check
+          pip install localstack awscli-local[ver1] # install LocalStack cli and awslocal
+          docker pull localstack/localstack:1.2.0   # Make sure to pull the latest version of the image
+          localstack start -d                       # Start LocalStack in the background
+          
+          echo "Waiting for LocalStack startup..."
+          until curl --fail --silent --max-time 1 http://localhost:4566/health; do echo -n . && sleep 1; done
+          
+          echo "Startup complete"
 
       - name: Check out repository code
         uses: actions/checkout@v3
