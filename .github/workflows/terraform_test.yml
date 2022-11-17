@@ -26,4 +26,4 @@ jobs:
           terraform test                                                     # run tests
           
           echo "Tests complete"
-          date -u %T
+          date -u +%T
