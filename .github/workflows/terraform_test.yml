@@ -25,4 +25,5 @@ jobs:
           cp tests/aws-provider-localstack.tf tests/example/test-provider.tf # copy provider overrides into place
           terraform test                                                     # run tests
           
-          echo "Tests complete at $(date -u %T)"
+          echo "Tests complete"
+          date -u %T
