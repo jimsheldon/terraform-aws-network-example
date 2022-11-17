@@ -1,0 +1,25 @@
+name: localstack-action-example
+on: pull_request
+jobs:
+  terraform-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Start LocalStack
+        run: |
+          pip install localstack awscli-local[ver1] # install LocalStack cli and awslocal
+          docker pull localstack/localstack:1.2.0   # Make sure to pull the latest version of the image
+          localstack start -d                       # Start LocalStack in the background
+          
+          echo "Waiting for LocalStack startup..."
+          until curl --fail --silent --max-time 1 http://localhost:4566/health; do echo -n . && sleep 1; done
+          
+          echo "Startup complete"
+          
+      - name: Run 'terraform test' against LocalStack
+        run: |
+          sed -i 's/localstack/localhost/g' tests/aws-provider-localstack.tf # localstack is reachable at 'localhost' not 'localstack'
+          cp tests/aws-provider-localstack.tf test-provider.tf               # copy provider overrides into place
+          cd tests                                                           # change to tests directory
+          go test -v -run TestTerraformAwsNetworkExample                     # run tests
+          
+          echo "Tests complete at $(date -u %T)"
