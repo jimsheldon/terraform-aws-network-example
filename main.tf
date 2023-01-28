@@ -18,9 +18,9 @@ resource "aws_vpc" "main" {
 resource "aws_internet_gateway" "main_gateway" {
   vpc_id = aws_vpc.main.id
 
-  tags = {
-    Name = var.tag_name
-  }
+#   tags = {
+#     Name = var.tag_name
+#   }
 }
 
 resource "aws_subnet" "private" {
