@@ -1,4 +1,4 @@
-name: localstack-action-example
+name: localstack-action
 on: pull_request
 jobs:
   terraform-test:
